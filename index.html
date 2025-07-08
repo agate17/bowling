@@ -317,10 +317,48 @@
             color: #222;
             opacity: 1;
         }
+        .fullscreen-btn {
+            position: fixed;
+            top: 24px;
+            right: 32px;
+            z-index: 2000;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: background 0.2s, color 0.2s, opacity 0.2s;
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fullscreen-btn:hover {
+            background: #00ffff;
+            color: #222;
+            opacity: 1;
+        }
+        .admin-btn {
+            right: 72px !important;
+        }
     </style>
 </head>
 <body>
-    <a href="admin.html" class="admin-btn" title="Admin Panel">Admin</a>
+    <a href="admin.html" class="admin-btn" title="Admin Panel" style="right: 72px;"><!-- Admin icon could go here in the future -->Admin</a>
+    <button id="fullscreen-btn" class="fullscreen-btn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="7" height="2" rx="1" fill="currentColor"/>
+            <rect x="3" y="3" width="2" height="7" rx="1" fill="currentColor"/>
+            <rect x="14" y="3" width="7" height="2" rx="1" fill="currentColor"/>
+            <rect x="19" y="3" width="2" height="7" rx="1" fill="currentColor"/>
+            <rect x="3" y="19" width="7" height="2" rx="1" fill="currentColor"/>
+            <rect x="3" y="14" width="2" height="7" rx="1" fill="currentColor"/>
+            <rect x="14" y="19" width="7" height="2" rx="1" fill="currentColor"/>
+            <rect x="19" y="14" width="2" height="7" rx="1" fill="currentColor"/>
+        </svg>
+    </button>
     <div class="container">
         <div class="progress-bar" id="progressBar"></div>
         
@@ -566,6 +604,16 @@
 
         // Start the application
         init();
+
+        // Fullscreen toggle logic
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        });
     </script>
 </body>
 </html>
