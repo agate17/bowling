@@ -109,9 +109,10 @@
             font-size: 2rem;
         }
 
-        .rank.first { color: #ffd700; }
-        .rank.second { color: #c0c0c0; }
-        .rank.third { color: #cd7f32; }
+        .rank.first { color: #ffd700; text-shadow: 0 0 10px #ffd700; }
+        .rank.second { color: #c0c0c0; text-shadow: 0 0 10px #c0c0c0; }
+        .rank.third { color: #cd7f32; text-shadow: 0 0 10px #cd7f32; }
+        .rank.fourthplus { color: #4ec3ff; text-shadow: 0 0 8px #4ec3ff; }
 
         .player-of-week {
             display: flex;
@@ -348,17 +349,33 @@
     <!-- In the .leaderboard-table, make it smaller and rounder -->
     <style>
     .leaderboard-table {
-        width: 60%;
-        margin: 0 auto;
+        width: 100%;
         border-radius: 18px;
         overflow: hidden;
-        font-size: 1.2rem;
+        font-size: 1.05rem;
         box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+        table-layout: auto;
     }
     .leaderboard-table th, .leaderboard-table td {
         border-radius: 0 !important;
+        padding: 10px 8px;
+        text-align: center;
+    }
+    .leaderboard-table th {
+        font-size: 1.1rem;
+        padding: 12px 8px;
+        background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+        color: #fff;
+    }
+    .leaderboard-table td {
+        background: rgba(255,255,255,0.05);
+        color: #fff;
     }
     .leaderboard-table th:first-child, .leaderboard-table td:first-child {
+        width: 60px;
+        min-width: 40px;
+        max-width: 70px;
+        text-align: center;
         border-top-left-radius: 18px;
         border-bottom-left-radius: 18px;
     }
@@ -387,7 +404,7 @@
         
         <!-- Leaderboard Screen -->
         <div class="screen active" id="leaderboard">
-            <div class="header">
+            <div class="leaderboard-header">
                 <h1>🎳 REZULTĀTU TABULA 🎳</h1>
                 <div class="subtitle">Labākie boulinga spēlētāji šomēnes</div>
             </div>
@@ -410,8 +427,8 @@
         <!-- Player of the Week Screen -->
         <div class="screen" id="playerOfWeek">
             <div class="header">
-                <h1>⭐ PLAYER OF THE WEEK ⭐</h1>
-                <div class="subtitle">Outstanding Performance</div>
+                <h1>⭐ NEDĒĻAS SPĒLĒTĀJS ⭐</h1>
+                <div class="subtitle">Izcils sniegums</div>
             </div>
             <div class="player-of-week">
                 <div class="player-info">
@@ -443,8 +460,8 @@
         <!-- Team Rankings Screen -->
         <div class="screen" id="teamRankings">
             <div class="header">
-                <h1>🏆 TEAM RANKINGS 🏆</h1>
-                <div class="subtitle">League Champions</div>
+                <h1>🏆 KOMANDU RANGA TABULA 🏆</h1>
+                <div class="subtitle">Līgas čempioni</div>
             </div>
             <div class="team-grid" id="teamGrid">
             </div>
@@ -453,12 +470,12 @@
         <!-- Trivia Screen -->
         <div class="screen" id="trivia">
             <div class="header">
-                <h1>🧠 BOWLING TRIVIA 🧠</h1>
-                <div class="subtitle">Test Your Knowledge</div>
+                <h1>🧠 BOULINGA VIKTORĪNA 🧠</h1>
+                <div class="subtitle">Pārbaudi savas zināšanas</div>
             </div>
             <div class="trivia-screen">
-                <div class="trivia-question" id="triviaQuestion">What is the maximum score possible in a perfect game of bowling?</div>
-                <div class="trivia-answer" id="triviaAnswer">Answer: 300 points!</div>
+                <div class="trivia-question" id="triviaQuestion">Kāds ir maksimālais punktu skaits ideālā boulinga spēlē?</div>
+                <div class="trivia-answer" id="triviaAnswer">Answer: 300 punkti!</div>
             </div>
         </div>
     </div>
@@ -477,19 +494,21 @@
             { rank: 8, name: "Ilze 'Vējš' Krūmiņa", average: 175, strikes: 60, spares: 40, games: 19 }
         ];
 
+        // Translate teamData to Latvian
         const teamData = [
-            { name: "Strike Force", average: 178, wins: 12, losses: 3, members: ["Sarah Chen", "Mike Johnson", "Alex Rodriguez"] },
-            { name: "Pin Crushers", average: 172, wins: 10, losses: 5, members: ["Jessica Williams", "David Brown", "Emma Davis"] },
-            { name: "Gutter Guardians", average: 165, wins: 8, losses: 7, members: ["Ryan Miller", "Lisa Wilson", "Tom Anderson"] },
-            { name: "Spare Champions", average: 158, wins: 6, losses: 9, members: ["Mark Taylor", "Amy Johnson", "Chris Lee"] }
+            { name: "Trāpītāji", average: 178, wins: 12, losses: 3, members: ["Jānis Ozoliņš", "Anna Kalniņa", "Mārtiņš Bērziņš"] },
+            { name: "Ķegļu Sagrauzēji", average: 172, wins: 10, losses: 5, members: ["Elīna Liepa", "Rihards Siliņš", "Līga Jansone"] },
+            { name: "Grozītāji", average: 165, wins: 8, losses: 7, members: ["Edgars Vītols", "Ilze Krūmiņa", "Tomass Andersons"] },
+            { name: "Rezervisti", average: 158, wins: 6, losses: 9, members: ["Marks Tīlers", "Aija Jansone", "Krišjānis Līcis"] }
         ];
 
+        // Translate trivia questions and answers to Latvian
         const triviaQuestions = [
-            { question: "What is the maximum score possible in a perfect game of bowling?", answer: "300 points!" },
-            { question: "How many pins are used in a standard game of bowling?", answer: "10 pins!" },
-            { question: "What is it called when you knock down all pins with your first ball?", answer: "A Strike!" },
-            { question: "What is the term for knocking down all remaining pins with your second ball?", answer: "A Spare!" },
-            { question: "How many frames are in a complete game of bowling?", answer: "10 frames!" }
+            { question: "Kāds ir maksimālais punktu skaits ideālā boulinga spēlē?", answer: "300 punkti!" },
+            { question: "Cik ķegļi ir standarta boulinga spēlē?", answer: "10 ķegļi!" },
+            { question: "Kā sauc, ja ar pirmo metienu nogāž visus ķegļus?", answer: "Strike!" },
+            { question: "Kā sauc, ja ar otro metienu nogāž visus atlikušos ķegļus?", answer: "Rezerves!" },
+            { question: "Cik freimu ir pilnā boulinga spēlē?", answer: "10 freimi!" }
         ];
 
         let currentScreen = 0;
@@ -503,18 +522,22 @@
             tbody.innerHTML = '';
             
             leaderboardData.forEach(player => {
-                const row = document.createElement('tr');
-                const rankClass = player.rank === 1 ? 'first' : player.rank === 2 ? 'second' : player.rank === 3 ? 'third' : '';
+                let rankClass = '';
+                if (player.rank === 1) rankClass = 'first';
+                else if (player.rank === 2) rankClass = 'second';
+                else if (player.rank === 3) rankClass = 'third';
+                else if (player.rank >= 4 && player.rank <= 8) rankClass = 'fourthplus';
                 
-                row.innerHTML = `
-                    <td><span class="rank ${rankClass}">#${player.rank}</span></td>
-                    <td>${player.name}</td>
-                    <td>${player.average}</td>
-                    <td>${player.strikes}</td>
-                    <td>${player.spares}</td>
-                    <td>${player.games}</td>
+                tbody.innerHTML += `
+                    <tr>
+                        <td><span class="rank ${rankClass}">#${player.rank}</span></td>
+                        <td>${player.name}</td>
+                        <td>${player.average}</td>
+                        <td>${player.strikes}</td>
+                        <td>${player.spares}</td>
+                        <td>${player.games}</td>
+                    </tr>
                 `;
-                tbody.appendChild(row);
             });
         }
 
