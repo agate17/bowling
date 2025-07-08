@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bowling Admin Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
+        section { margin-bottom: 2em; }
+        label { display: block; margin-bottom: 0.5em; font-weight: bold; }
+        input, textarea, select, button { width: 100%; padding: 0.5em; margin-bottom: 1em; border-radius: 4px; border: 1px solid #ccc; }
+        button { background: #007bff; color: #fff; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Panel</h1>
+        <section>
+            <h2>Add Message</h2>
+            <label for="message">Message</label>
+            <textarea id="message" placeholder="Type a message..."></textarea>
+            <button disabled>Add Message (Coming Soon)</button>
+        </section>
+        <section>
+            <h2>Update Leaderboard</h2>
+            <label for="leaderboard">Leaderboard Data</label>
+            <textarea id="leaderboard" placeholder="Paste leaderboard data..."></textarea>
+            <button disabled>Update Leaderboard (Coming Soon)</button>
+        </section>
+        <section>
+            <h2>Theme Controls</h2>
+            <label for="theme">Select Theme</label>
+            <select id="theme">
+                <option>Default</option>
+                <option>Dark</option>
+                <option>Light</option>
+            </select>
+            <button disabled>Apply Theme (Coming Soon)</button>
+        </section>
+        <p style="text-align:center; color:#888;">Functionality coming soon...</p>
+    </div>
+</body>
+</html> 
