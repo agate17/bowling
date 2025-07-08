@@ -344,6 +344,29 @@
             right: 72px !important;
         }
     </style>
+    <!-- Update leaderboard table headers and sample data, and translate all visible text to Latvian -->
+    <!-- In the .leaderboard-table, make it smaller and rounder -->
+    <style>
+    .leaderboard-table {
+        width: 60%;
+        margin: 0 auto;
+        border-radius: 18px;
+        overflow: hidden;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    }
+    .leaderboard-table th, .leaderboard-table td {
+        border-radius: 0 !important;
+    }
+    .leaderboard-table th:first-child, .leaderboard-table td:first-child {
+        border-top-left-radius: 18px;
+        border-bottom-left-radius: 18px;
+    }
+    .leaderboard-table th:last-child, .leaderboard-table td:last-child {
+        border-top-right-radius: 18px;
+        border-bottom-right-radius: 18px;
+    }
+    </style>
 </head>
 <body>
     <a href="admin.html" class="admin-btn" title="Admin Panel" style="right: 72px;"><!-- Admin icon could go here in the future -->Admin</a>
@@ -365,18 +388,18 @@
         <!-- Leaderboard Screen -->
         <div class="screen active" id="leaderboard">
             <div class="header">
-                <h1>🎳 LEADERBOARD 🎳</h1>
-                <div class="subtitle">Top Bowlers This Month</div>
+                <h1>🎳 REZULTĀTU TABULA 🎳</h1>
+                <div class="subtitle">Labākie boulinga spēlētāji šomēnes</div>
             </div>
             <table class="leaderboard-table">
                 <thead>
                     <tr>
-                        <th>Rank</th>
-                        <th>Player</th>
-                        <th>Average</th>
-                        <th>Strikes</th>
-                        <th>Spares</th>
-                        <th>Games</th>
+                        <th>Vieta</th>
+                        <th>Spēlētājs</th>
+                        <th>Punkti</th>
+                        <th>Trāpījumi</th>
+                        <th>Rezerves</th>
+                        <th>Spēles</th>
                     </tr>
                 </thead>
                 <tbody id="leaderboardBody">
@@ -441,16 +464,17 @@
     </div>
 
     <script>
-        // Sample data - in real implementation, this would come from a backend/JSON file
+        // Update leaderboard table headers and sample data, and translate all visible text to Latvian
+        // In the .leaderboard-table, make it smaller and rounder
         const leaderboardData = [
-            { rank: 1, name: "Sarah 'Striker' Chen", average: 195, strikes: 78, spares: 45, games: 24 },
-            { rank: 2, name: "Mike 'Thunder' Johnson", average: 187, strikes: 65, spares: 52, games: 22 },
-            { rank: 3, name: "Alex 'Precision' Rodriguez", average: 182, strikes: 58, spares: 48, games: 20 },
-            { rank: 4, name: "Jessica 'Spin' Williams", average: 178, strikes: 52, spares: 55, games: 19 },
-            { rank: 5, name: "David 'Knockout' Brown", average: 175, strikes: 48, spares: 58, games: 21 },
-            { rank: 6, name: "Emma 'Bullseye' Davis", average: 172, strikes: 45, spares: 52, games: 18 },
-            { rank: 7, name: "Ryan 'Rocket' Miller", average: 169, strikes: 42, spares: 49, games: 17 },
-            { rank: 8, name: "Lisa 'Lightning' Wilson", average: 165, strikes: 38, spares: 46, games: 16 }
+            { rank: 1, name: "Jānis 'Striker' Ozoliņš", average: 210, strikes: 85, spares: 50, games: 26 },
+            { rank: 2, name: "Anna 'Bulta' Kalniņa", average: 202, strikes: 80, spares: 48, games: 25 },
+            { rank: 3, name: "Mārtiņš 'Precizitāte' Bērziņš", average: 198, strikes: 75, spares: 47, games: 24 },
+            { rank: 4, name: "Elīna 'Spēks' Liepa", average: 192, strikes: 70, spares: 45, games: 23 },
+            { rank: 5, name: "Rihards 'Ātrums' Siliņš", average: 188, strikes: 68, spares: 44, games: 22 },
+            { rank: 6, name: "Līga 'Zibens' Jansone", average: 185, strikes: 65, spares: 43, games: 21 },
+            { rank: 7, name: "Edgars 'Bumba' Vītols", average: 180, strikes: 62, spares: 41, games: 20 },
+            { rank: 8, name: "Ilze 'Vējš' Krūmiņa", average: 175, strikes: 60, spares: 40, games: 19 }
         ];
 
         const teamData = [
