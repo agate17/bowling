@@ -296,9 +296,31 @@
             .player-avatar { width: 250px; height: 250px; font-size: 6rem; }
             .player-name { font-size: 3rem; }
         }
+
+        .admin-btn {
+            position: fixed;
+            top: 24px;
+            right: 32px;
+            z-index: 2000;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: background 0.2s;
+            opacity: 0.5;
+        }
+        .admin-btn:hover {
+            background: #00ffff;
+            color: #222;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
+    <a href="admin.html" class="admin-btn" title="Admin Panel">Admin</a>
     <div class="container">
         <div class="progress-bar" id="progressBar"></div>
         

@@ -13,10 +13,27 @@
         input, textarea, select, button { width: 100%; padding: 0.5em; margin-bottom: 1em; border-radius: 4px; border: 1px solid #ccc; }
         button { background: #007bff; color: #fff; border: none; cursor: pointer; }
         button:hover { background: #0056b3; }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 2em;
+            background: #eee;
+            color: #007bff;
+            padding: 8px 18px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s, color 0.2s;
+            border: 1px solid #007bff;
+        }
+        .back-btn:hover {
+            background: #007bff;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <a href="index.html" class="back-btn">← Back to Display</a>
         <h1>Admin Panel</h1>
         <section>
             <h2>Add Message</h2>
