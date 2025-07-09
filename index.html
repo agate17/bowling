@@ -125,6 +125,7 @@
         .player-info {
             flex: 1;
             text-align: center;
+            margin-top: 0;
         }
 
         .player-avatar {
@@ -161,50 +162,60 @@
 
         .player-stats {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            margin-top: 40px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 48px;
+            margin-top: 48px;
+            width: 100%;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .stat-card {
             background: rgba(255,255,255,0.1);
-            padding: 30px;
+            padding: 40px 24px;
             border-radius: 15px;
             border: 2px solid #00ffff;
             text-align: center;
             backdrop-filter: blur(10px);
             box-shadow: 0 0 30px rgba(0,255,255,0.3);
+            min-width: 200px;
         }
 
         .stat-value {
-            font-size: 3rem;
+            font-size: 4.6rem;
             font-weight: bold;
             color: #ff6b6b;
             text-shadow: 0 0 15px #ff6b6b;
         }
 
         .stat-label {
-            font-size: 1.5rem;
+            font-size: 2.2rem;
             color: #ccc;
             margin-top: 10px;
         }
 
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 48px;
             margin-top: 40px;
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .team-card {
             background: rgba(255,255,255,0.1);
-            padding: 40px;
+            padding: 44px 20px;
             border-radius: 20px;
             border: 3px solid #ff6b6b;
             text-align: center;
             backdrop-filter: blur(10px);
             box-shadow: 0 0 40px rgba(255,107,107,0.3);
             transition: transform 0.3s ease;
+            min-width: 200px;
         }
 
         .team-card:hover {
@@ -415,6 +426,74 @@
         margin-bottom: 0.5em;
     }
     </style>
+    <!-- Update section headers to use the same neon style as leaderboard -->
+    <style>
+    .section-header {
+        width: 100%;
+        margin: 0 auto 0.5em auto;
+        border-radius: 18px 18px 0 0;
+        background: none;
+        color: #00ffff;
+        text-align: center;
+        padding: 0;
+    }
+    .section-header h1 {
+        font-size: 2.8rem;
+        font-weight: bold;
+        margin: 0.2em 0 0.1em 0;
+        color: #00ffff;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: inline-block;
+        text-shadow:
+            0 0 2px #00ffff,
+            0 0 6px #00ffff,
+            0 0 12px #00ffff;
+        -webkit-text-stroke: 2px #111;
+        text-stroke: 2px #111;
+    }
+    .section-header .subtitle {
+        font-size: 1.2rem;
+        color: #fff;
+        text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+        font-weight: 300;
+        margin-bottom: 0.5em;
+    }
+    </style>
+    <!-- Add section navigation buttons at the top -->
+    <div class="section-nav">
+        <button class="section-btn" data-section="leaderboard">Rezultātu Tabula</button>
+        <button class="section-btn" data-section="playerOfWeek">Nedēļas Spēlētājs</button>
+        <button class="section-btn" data-section="teamRankings">Komandu Ranga Tabula</button>
+        <button class="section-btn" data-section="trivia">Boulinga Viktorīna</button>
+    </div>
+    <style>
+    .section-nav {
+        width: 100%;
+        text-align: center;
+        margin: 24px 0 12px 0;
+    }
+    .section-btn {
+        background: #111;
+        color: #00ffff;
+        border: 2px solid #00ffff;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin: 0 8px;
+        padding: 10px 22px;
+        cursor: pointer;
+        box-shadow: 0 0 8px #00ffff44;
+        transition: background 0.2s, color 0.2s, border 0.2s;
+        text-shadow: 0 0 6px #00ffff;
+    }
+    .section-btn:hover, .section-btn.active {
+        background: #00ffff;
+        color: #111;
+        border: 2px solid #00ffff;
+        text-shadow: none;
+    }
+    </style>
 </head>
 <body>
     <a href="admin.html" class="admin-btn" title="Admin Panel" style="right: 72px;"><!-- Admin icon could go here in the future -->Admin</a>
@@ -457,15 +536,19 @@
 
         <!-- Player of the Week Screen -->
         <div class="screen" id="playerOfWeek">
-            <div class="header">
+            <div class="section-header">
                 <h1>⭐ NEDĒĻAS SPĒLĒTĀJS ⭐</h1>
                 <div class="subtitle">Izcils sniegums</div>
             </div>
             <div class="player-of-week">
-                <div class="player-info">
-                    <div class="player-avatar" id="playerAvatar">🎳</div>
-                    <div class="player-name" id="playerName">Mike "Thunder" Johnson</div>
-                    <div class="player-title" id="playerTitle">Strike Master</div>
+                <div class="player-info" style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="player-main-row" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 0; margin-top: 0;">
+                        <div class="player-avatar" id="playerAvatar" style="width: 90px; height: 90px; font-size: 2.8rem; min-width: 90px; min-height: 90px; flex-shrink: 0;"></div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
+                            <div class="player-name" id="playerName" style="margin-bottom: 4px; font-size: 2.1rem; text-align: left;">Mike "Thunder" Johnson</div>
+                            <div class="player-title" id="playerTitle" style="font-size: 1.1rem; margin-bottom: 0; margin-left: 0; text-align: left;">Strike Master</div>
+                        </div>
+                    </div>
                     <div class="player-stats">
                         <div class="stat-card">
                             <div class="stat-value" id="weeklyAverage">187</div>
@@ -490,18 +573,28 @@
 
         <!-- Team Rankings Screen -->
         <div class="screen" id="teamRankings">
-            <div class="header">
+            <div class="section-header">
                 <h1>🏆 KOMANDU RANGA TABULA 🏆</h1>
                 <div class="subtitle">Līgas čempioni</div>
             </div>
-            <div class="team-grid" id="teamGrid">
-            </div>
+            <table class="leaderboard-table" style="margin-top: 32px;">
+                <thead>
+                    <tr>
+                        <th>Vieta</th>
+                        <th>Komanda</th>
+                        <th>Vidējais</th>
+                        <th>Uzvaras-Zaudējumi</th>
+                        <th>Spēlētāji</th>
+                    </tr>
+                </thead>
+                <tbody id="teamLeaderboardBody"></tbody>
+            </table>
         </div>
 
         <!-- Trivia Screen -->
         <div class="screen" id="trivia">
-            <div class="header">
-                <h1>🧠 BOULINGA VIKTORĪNA 🧠</h1>
+            <div class="section-header">
+                <h1>�� BOULINGA VIKTORĪNA 🧠</h1>
                 <div class="subtitle">Pārbaudi savas zināšanas</div>
             </div>
             <div class="trivia-screen">
@@ -542,9 +635,7 @@
             { question: "Cik freimu ir pilnā boulinga spēlē?", answer: "10 freimi!" }
         ];
 
-        let currentScreen = 0;
         let currentTriviaIndex = 0;
-        const screens = ['leaderboard', 'playerOfWeek', 'teamRankings', 'trivia'];
         const screenDuration = 15000; // 15 seconds per screen
 
         // Initialize displays
@@ -573,27 +664,23 @@
         }
 
         function initializeTeamRankings() {
-            const teamGrid = document.getElementById('teamGrid');
-            teamGrid.innerHTML = '';
-            
+            const tbody = document.getElementById('teamLeaderboardBody');
+            tbody.innerHTML = '';
             teamData.forEach((team, index) => {
-                const teamCard = document.createElement('div');
-                teamCard.className = 'team-card';
-                
-                teamCard.innerHTML = `
-                    <div class="team-name">${team.name}</div>
-                    <div class="team-stats">
-                        <div class="stat-card">
-                            <div class="stat-value">${team.average}</div>
-                            <div class="stat-label">Team Average</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">${team.wins}-${team.losses}</div>
-                            <div class="stat-label">Win-Loss Record</div>
-                        </div>
-                    </div>
+                let rankClass = '';
+                if (index === 0) rankClass = 'first';
+                else if (index === 1) rankClass = 'second';
+                else if (index === 2) rankClass = 'third';
+                else rankClass = 'fourthplus';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><span class="rank ${rankClass}">#${index + 1}</span></td>
+                        <td>${team.name}</td>
+                        <td>${team.average}</td>
+                        <td>${team.wins}-${team.losses}</td>
+                        <td>${team.members.join(', ')}</td>
+                    </tr>
                 `;
-                teamGrid.appendChild(teamCard);
             });
         }
 
@@ -647,49 +734,55 @@
             animate();
         }
 
-        function switchScreen() {
-            // Hide current screen
-            document.getElementById(screens[currentScreen]).classList.remove('active');
-            
-            // Move to next screen
-            currentScreen = (currentScreen + 1) % screens.length;
-            
-            // Show new screen
-            document.getElementById(screens[currentScreen]).classList.add('active');
-            
-            // Update trivia if on trivia screen
-            if (screens[currentScreen] === 'trivia') {
-                updateTrivia();
-            }
-            
-            // Show achievement banner occasionally
-            showAchievementBanner();
-            
-            // Reset progress bar
-            updateProgressBar();
+        // Remove all code related to automatic screen rotation
+        // Only manual section navigation remains
+        // Manual section navigation only
+        const screens = ['leaderboard', 'playerOfWeek', 'teamRankings', 'trivia'];
+        function showScreen(index) {
+            screens.forEach((id, i) => {
+                document.getElementById(id).classList.toggle('active', i === index);
+            });
+            // Highlight active button
+            document.querySelectorAll('.section-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
         }
+        document.querySelectorAll('.section-btn').forEach((btn, i) => {
+            btn.addEventListener('click', () => {
+                showScreen(i);
+            });
+        });
+        initializeLeaderboard();
+        initializeTeamRankings();
+        // Show the first screen by default
+        showScreen(0);
 
-        // Initialize everything
-        function init() {
-            initializeLeaderboard();
-            initializeTeamRankings();
-            updateTrivia();
-            updateProgressBar();
-            
-            // Start screen rotation
-            setInterval(switchScreen, screenDuration);
-        }
-
-        // Start the application
-        init();
-
-        // Fullscreen toggle logic
+        // Fullscreen button functionality
         const fullscreenBtn = document.getElementById('fullscreen-btn');
         fullscreenBtn.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+                // Enter fullscreen
+                const docElm = document.documentElement;
+                if (docElm.requestFullscreen) {
+                    docElm.requestFullscreen();
+                } else if (docElm.mozRequestFullScreen) { /* Firefox */
+                    docElm.mozRequestFullScreen();
+                } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                    docElm.webkitRequestFullscreen();
+                } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+                    docElm.msRequestFullscreen();
+                }
             } else {
-                document.exitFullscreen();
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { /* Firefox */
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { /* Chrome, Safari & Opera */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE/Edge */
+                    document.msExitFullscreen();
+                }
             }
         });
     </script>
