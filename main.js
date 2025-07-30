@@ -1,7 +1,6 @@
-// Bowling Stats Display JavaScript
+// Bowling Stats Display JavaScript - Fixed Version
+// This version works with screen-manager.js instead of competing with it
 
-// Update leaderboard table headers and sample data, and translate all visible text to Latvian
-// In the .leaderboard-table, make it smaller and rounder
 const leaderboardData = [
     { rank: 1, name: "Jānis 'Striker' Ozoliņš", average: 210, strikes: 85, spares: 50, games: 26 },
     { rank: 2, name: "Anna 'Bulta' Kalniņa", average: 202, strikes: 80, spares: 48, games: 25 },
@@ -13,7 +12,6 @@ const leaderboardData = [
     { rank: 8, name: "Ilze 'Vējš' Krūmiņa", average: 175, strikes: 60, spares: 40, games: 19 }
 ];
 
-// Translate teamData to Latvian
 const teamData = [
     { name: "Trāpītāji", average: 178, wins: 12, losses: 3, members: ["Jānis Ozoliņš", "Anna Kalniņa", "Mārtiņš Bērziņš"] },
     { name: "Ķegļu Sagrauzēji", average: 172, wins: 10, losses: 5, members: ["Elīna Liepa", "Rihards Siliņš", "Līga Jansone"] },
@@ -21,7 +19,6 @@ const teamData = [
     { name: "Rezervisti", average: 158, wins: 6, losses: 9, members: ["Marks Tīlers", "Aija Jansone", "Krišjānis Līcis"] }
 ];
 
-// Translate trivia questions and answers to Latvian
 const triviaQuestions = [
     { question: "Kāds ir maksimālais punktu skaits ideālā boulinga spēlē?", answer: "300 punkti!" },
     { question: "Cik ķegļi ir standarta boulinga spēlē?", answer: "10 ķegļi!" },
@@ -31,11 +28,13 @@ const triviaQuestions = [
 ];
 
 let currentTriviaIndex = 0;
-const screenDuration = 1500; // 15 seconds per screen
+let triviaUpdateInterval = null;
 
 // Initialize displays
 function initializeLeaderboard() {
     const tbody = document.getElementById('leaderboardBody');
+    if (!tbody) return;
+    
     tbody.innerHTML = '';
     
     leaderboardData.forEach(player => {
@@ -60,6 +59,8 @@ function initializeLeaderboard() {
 
 function initializeTeamRankings() {
     const tbody = document.getElementById('teamLeaderboardBody');
+    if (!tbody) return;
+    
     tbody.innerHTML = '';
     teamData.forEach((team, index) => {
         let rankClass = '';
@@ -82,6 +83,9 @@ function initializeTeamRankings() {
 function updateTrivia() {
     const question = document.getElementById('triviaQuestion');
     const answer = document.getElementById('triviaAnswer');
+    
+    if (!question || !answer) return;
+    
     const currentTrivia = triviaQuestions[currentTriviaIndex];
     
     question.textContent = currentTrivia.question;
@@ -106,98 +110,115 @@ function showAchievementBanner() {
         document.body.appendChild(banner);
         
         setTimeout(() => {
-            document.body.removeChild(banner);
+            if (document.body.contains(banner)) {
+                document.body.removeChild(banner);
+            }
         }, 3000);
     }
 }
 
-function updateProgressBar() {
+// Progress bar function - let screen-manager handle the timing
+function updateProgressBar(duration = 10000) {
     const progressBar = document.getElementById('progressBar');
+    if (!progressBar) return;
+    
     const startTime = Date.now();
     
     function animate() {
         const elapsed = Date.now() - startTime;
-        const progress = (elapsed / screenDuration) * 100;
+        const progress = (elapsed / duration) * 100;
         
         progressBar.style.width = Math.min(progress, 100) + '%';
         
         if (progress < 100) {
             requestAnimationFrame(animate);
+        } else {
+            // Reset for next cycle
+            setTimeout(() => {
+                if (progressBar) {
+                    progressBar.style.width = '0%';
+                    updateProgressBar(duration);
+                }
+            }, 100);
         }
     }
     
     animate();
 }
 
-// Automatic section rotation with progress bar
-const screens = ['leaderboard', 'playerOfWeek', 'teamRankings', 'trivia'];
-let currentScreen = 0;
-function showScreen(index) {
-    screens.forEach((id, i) => {
-        document.getElementById(id).classList.toggle('active', i === index);
-    });
-}
-function updateProgressBar() {
-    const progressBar = document.getElementById('progressBar');
-    const startTime = Date.now();
-    function animate() {
-        const elapsed = Date.now() - startTime;
-        const progress = (elapsed / screenDuration) * 100;
-        progressBar.style.width = Math.min(progress, 100) + '%';
-        if (progress < 100) {
-            requestAnimationFrame(animate);
-        }
-    }
-    animate();
-}
-function nextScreen() {
-    currentScreen = (currentScreen + 1) % screens.length;
-    showScreen(currentScreen);
-    updateProgressBar();
-}
-initializeLeaderboard();
-initializeTeamRankings();
-showScreen(0);
-updateProgressBar();
-setInterval(nextScreen, screenDuration);
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Initializing bowling display...');
+    
+    // Initialize all displays
+    initializeLeaderboard();
+    initializeTeamRankings();
+    updateTrivia();
+    
+    // Start progress bar
+    updateProgressBar(10000);
+    
+    // Start trivia rotation every 30 seconds
+    triviaUpdateInterval = setInterval(updateTrivia, 30000);
+    
+    // Show achievement banner occasionally
+    setInterval(showAchievementBanner, 60000);
+    
+    console.log('✅ Bowling display initialized');
+});
 
 // Fullscreen button functionality
-const fullscreenBtn = document.getElementById('fullscreen-btn');
-fullscreenBtn.addEventListener('click', () => {
-    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
-        // Enter fullscreen
-        const docElm = document.documentElement;
-        if (docElm.requestFullscreen) {
-            docElm.requestFullscreen();
-        } else if (docElm.mozRequestFullScreen) { /* Firefox */
-            docElm.mozRequestFullScreen();
-        } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-            docElm.webkitRequestFullscreen();
-        } else if (docElm.msRequestFullscreen) { /* IE/Edge */
-            docElm.msRequestFullscreen();
+document.addEventListener('DOMContentLoaded', function() {
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    if (!fullscreenBtn) return;
+    
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && 
+            !document.mozFullScreenElement && !document.msFullscreenElement) {
+            // Enter fullscreen
+            const docElm = document.documentElement;
+            if (docElm.requestFullscreen) {
+                docElm.requestFullscreen();
+            } else if (docElm.mozRequestFullScreen) { /* Firefox */
+                docElm.mozRequestFullScreen();
+            } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                docElm.webkitRequestFullscreen();
+            } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+                docElm.msRequestFullscreen();
+            }
+        } else {
+            // Exit fullscreen
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) { /* Firefox */
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { /* Chrome, Safari & Opera */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE/Edge */
+                document.msExitFullscreen();
+            }
         }
-    } else {
-        // Exit fullscreen
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) { /* Firefox */
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) { /* Chrome, Safari & Opera */
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE/Edge */
-            document.msExitFullscreen();
-        }
-    }
+    });
 });
+
 // Listen for fullscreen change to hide/show admin button
 function handleFullscreenChange() {
-    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+    if (document.fullscreenElement || document.webkitFullscreenElement || 
+        document.mozFullScreenElement || document.msFullscreenElement) {
         document.body.classList.add('fullscreen-active');
     } else {
         document.body.classList.remove('fullscreen-active');
     }
 }
+
 document.addEventListener('fullscreenchange', handleFullscreenChange);
 document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-document.addEventListener('MSFullscreenChange', handleFullscreenChange); 
+document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+// Clean up intervals when page unloads
+window.addEventListener('beforeunload', function() {
+    if (triviaUpdateInterval) {
+        clearInterval(triviaUpdateInterval);
+    }
+});

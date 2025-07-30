@@ -103,7 +103,7 @@ class ScreenManager {
     }
 
     // Start automatic screen rotation
-    startScreenRotation(interval = 10000) {
+    startScreenRotation(interval = 1000) {
         if (this.allScreens.length <= 1) {
             console.log('ℹ️ Not enough screens for rotation');
             return;
@@ -115,7 +115,7 @@ class ScreenManager {
         }
 
         this.isRotating = true;
-        console.log(`🔄 Starting screen rotation (${interval/1000}s interval)`);
+        console.log(`🔄 Starting screen rotation (${interval/100}s interval)`);
 
         this.rotationInterval = setInterval(() => {
             this.nextScreen();
