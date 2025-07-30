@@ -31,7 +31,7 @@ const triviaQuestions = [
 ];
 
 let currentTriviaIndex = 0;
-const screenDuration = 15000; // 15 seconds per screen
+const screenDuration = 1500; // 15 seconds per screen
 
 // Initialize displays
 function initializeLeaderboard() {

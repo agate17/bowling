@@ -4,60 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bowling Admin Panel</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        h1 { text-align: center; }
-        section { margin-bottom: 2em; }
-        label { display: block; margin-bottom: 0.5em; font-weight: bold; }
-        input, textarea, select, button { width: 100%; padding: 0.5em; margin-bottom: 1em; border-radius: 4px; border: 1px solid #ccc; }
-        button { background: #007bff; color: #fff; border: none; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .back-btn {
-            display: inline-block;
-            margin-bottom: 2em;
-            background: #eee;
-            color: #007bff;
-            padding: 8px 18px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background 0.2s, color 0.2s;
-            border: 1px solid #007bff;
-        }
-        .back-btn:hover {
-            background: #007bff;
-            color: #fff;
-        }
-    </style>
+    <link rel="stylesheet" href="admin_style.css">
 </head>
 <body>
     <div class="container">
         <a href="index.html" class="back-btn">← Atpakaļ uz rezultātu ekrānu</a>
-        <h1>Administrācijas Panelis</h1>
-        <section>
-            <h2>Pievienot ziņojumu</h2>
-            <label for="message">Ziņojums</label>
-            <textarea id="message" placeholder="Ierakstiet ziņojumu..."></textarea>
-            <button disabled>Pievienot ziņojumu (Drīzumā)</button>
-        </section>
-        <section>
-            <h2>Atjaunot rezultātu tabulu</h2>
-            <label for="leaderboard">Rezultātu dati</label>
-            <textarea id="leaderboard" placeholder="Ievietojiet rezultātu datus..."></textarea>
-            <button disabled>Atjaunot tabulu (Drīzumā)</button>
-        </section>
-        <section>
-            <h2>Tēmas iestatījumi</h2>
-            <label for="theme">Izvēlieties tēmu</label>
-            <select id="theme">
-                <option>Noklusējuma</option>
-                <option>Tumšā</option>
-                <option>Gaišā</option>
-            </select>
-            <button disabled>Pielietot tēmu (Drīzumā)</button>
-        </section>
-        <p style="text-align:center; color:#888;">Funkcionalitāte drīzumā...</p>
+        <h1>Admin Panel</h1>
+        <div class="admin-section">
+            <!-- Admin Panel to Add New Screens -->
+            <div class="admin-panel">
+                <h2>Pievienot jaunu ekrānu</h2>
+                <form id="newScreenForm">
+                    <label>Nosaukums (Title):</label>
+                    <input type="text" id="screenTitle" required><br>
+
+                    <label>Apakšvirsraksts (Subtitle):</label>
+                    <input type="text" id="screenSubtitle"><br>
+
+                    <label>Satura HTML:</label><br>
+                    <textarea id="screenContent" rows="4" required></textarea><br>
+
+                    <label>Screen ID (unikāls ID, piem. "sponsors"):</label>
+                    <input type="text" id="screenId" required><br><br>
+
+                    <button type="submit">💾 Saglabāt ekrānu</button>
+                </form>
+
+                <h3>📺 Priekšskatījums</h3>
+                <div id="previewContainer" class="screen preview"></div>
+            </div>
     </div>
+    <script>
+        const form = document.getElementById("newScreenForm");
+        const preview = document.getElementById("previewContainer");
+
+        const screenStorageKey = "customScreens";
+
+        function createScreenElement(screenData) {
+            const screen = document.createElement("div");
+            screen.classList.add("screen");
+            screen.id = screenData.id;
+
+            screen.innerHTML = `
+                <div class="section-header">
+                    <h1>${screenData.title}</h1>
+                    <div class="subtitle">${screenData.subtitle}</div>
+                </div>
+                <div class="screen-content">
+                    ${screenData.content}
+                </div>
+            `;
+            return screen;
+        }
+
+        function updatePreview() {
+            const screenData = {
+                title: document.getElementById("screenTitle").value,
+                subtitle: document.getElementById("screenSubtitle").value,
+                content: document.getElementById("screenContent").value,
+                id: document.getElementById("screenId").value
+            };
+            preview.innerHTML = "";
+            preview.appendChild(createScreenElement(screenData));
+        }
+
+        form.addEventListener("input", updatePreview);
+
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const screenData = {
+                title: document.getElementById("screenTitle").value,
+                subtitle: document.getElementById("screenSubtitle").value,
+                content: document.getElementById("screenContent").value,
+                id: document.getElementById("screenId").value
+            };
+
+            // Save to localStorage
+            const savedScreens = JSON.parse(localStorage.getItem(screenStorageKey)) || [];
+            savedScreens.push(screenData);
+            localStorage.setItem(screenStorageKey, JSON.stringify(savedScreens));
+
+            // Add to DOM
+            const newScreen = createScreenElement(screenData);
+            document.body.appendChild(newScreen);
+
+            alert("Ekrāns pievienots!");
+            form.reset();
+            preview.innerHTML = "";
+        });
+
+        // Load screens from localStorage on page load
+        window.addEventListener("DOMContentLoaded", () => {
+            const savedScreens = JSON.parse(localStorage.getItem(screenStorageKey)) || [];
+            savedScreens.forEach(screenData => {
+                const screen = createScreenElement(screenData);
+                document.body.appendChild(screen);
+            });
+        });
+    </script>
+
 </body>
 </html> 
