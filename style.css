@@ -539,3 +539,302 @@ body.fullscreen-active .admin-btn {
         font-size: 1.2rem !important;
     }
 } 
+
+/* Custom Screen Management System - Styles for Index Page */
+/* Add these styles to your existing index.css file */
+
+/* Base styles for custom screens */
+.custom-screen {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 40px;
+    margin: 20px 0;
+    text-align: center;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Custom screen header styles */
+.custom-screen .section-header {
+    margin-bottom: 30px;
+    z-index: 2;
+    position: relative;
+}
+
+.custom-screen .section-header h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    animation: fadeInDown 1s ease-out;
+}
+
+.custom-screen .subtitle {
+    font-size: 1.4rem;
+    opacity: 0.9;
+    margin-bottom: 20px;
+    animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+/* Custom content area */
+.custom-content {
+    background: rgba(255,255,255,0.1);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    z-index: 2;
+    position: relative;
+    animation: fadeIn 1s ease-out 0.6s both;
+}
+
+/* Different background gradients for different screen types */
+.custom-screen[data-screen-type="sponsor"] {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+}
+
+.custom-screen[data-screen-type="announcement"] {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.custom-screen[data-screen-type="promotion"] {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.custom-screen[data-screen-type="custom"] {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+/* Animated background elements */
+.custom-screen::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        rgba(255,255,255,0.05) 2px,
+        rgba(255,255,255,0.05) 4px
+    );
+    animation: moveBackground 20s linear infinite;
+    z-index: 1;
+}
+
+/* Content styling within custom screens */
+.custom-content h2 {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.custom-content h3 {
+    color: #fff;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.custom-content p {
+    color: rgba(255,255,255,0.9);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.custom-content ul {
+    text-align: left;
+    color: rgba(255,255,255,0.9);
+    padding-left: 20px;
+}
+
+.custom-content li {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+/* Buttons within custom content */
+.custom-content .btn {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.3);
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px;
+}
+
+.custom-content .btn:hover {
+    background: rgba(255,255,255,0.3);
+    border-color: rgba(255,255,255,0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+/* Images within custom content */
+.custom-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Tables within custom content */
+.custom-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.custom-content th,
+.custom-content td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.custom-content th {
+    background: rgba(255,255,255,0.2);
+    font-weight: bold;
+}
+
+/* Screen transition effects */
+.screen {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.screen.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes moveBackground {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .custom-screen {
+        padding: 20px;
+        margin: 10px 0;
+        min-height: 400px;
+    }
+
+    .custom-screen .section-header h1 {
+        font-size: 2rem;
+    }
+
+    .custom-screen .subtitle {
+        font-size: 1.1rem;
+    }
+
+    .custom-content {
+        padding: 20px;
+    }
+
+    .custom-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .custom-content p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .custom-screen {
+        padding: 15px;
+        min-height: 300px;
+    }
+
+    .custom-screen .section-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .custom-screen .subtitle {
+        font-size: 1rem;
+    }
+
+    .custom-content {
+        padding: 15px;
+    }
+}
+
+/* Loading indicator for when screens are being loaded */
+.screen-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.screen-loading::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid #666;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

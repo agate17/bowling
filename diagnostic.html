@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Diagnostic Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .diagnostic-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { background: #0056b3; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        .status { 
+            padding: 10px; 
+            border-radius: 5px; 
+            margin: 10px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        pre { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 5px; 
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagnostic-panel">
+        <h1>🔧 Screen Diagnostic Tool</h1>
+        <p>Use this tool to diagnose and fix screen display issues.</p>
+        
+        <div class="controls">
+            <button class="btn" onclick="runDiagnostic()">🔍 Run Full Diagnostic</button>
+            <button class="btn btn-success" onclick="showAllScreens()">👁️ Show All Screens</button>
+            <button class="btn" onclick="manualNext()">➡️ Next Screen</button>
+            <button class="btn" onclick="manualPrev()">⬅️ Previous Screen</button>
+            <button class="btn btn-danger" onclick="resetScreens()">🔄 Reset All Screens</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function runDiagnostic() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h3>🔍 Diagnostic Results:</h3>';
+            
+            // Check if screens exist
+            const allScreens = document.querySelectorAll('.screen');
+            if (allScreens.length === 0) {
+                results.innerHTML += '<div class="status error">❌ No screens found with class "screen"</div>';
+                results.innerHTML += '<div class="status warning">💡 Make sure your screens have class="screen"</div>';
+            } else {
+                results.innerHTML += `<div class="status success">✅ Found ${allScreens.length} screens</div>`;
+            }
+            
+            // List all screens
+            results.innerHTML += '<h4>📋 Screen List:</h4>';
+            const screenList = Array.from(allScreens).map((screen, index) => {
+                const display = window.getComputedStyle(screen).display;
+                const id = screen.id || `unnamed-${index}`;
+                const classes = screen.className;
+                return `${index + 1}. ID: "${id}" | Display: ${display} | Classes: "${classes}"`;
+            });
+            
+            if (screenList.length > 0) {
+                results.innerHTML += `<pre>${screenList.join('\n')}</pre>`;
+            }
+            
+            // Check localStorage
+            const customScreens = localStorage.getItem('customScreens');
+            if (!customScreens) {
+                results.innerHTML += '<div class="status warning">⚠️ No custom screens in localStorage</div>';
+            } else {
+                try {
+                    const parsed = JSON.parse(customScreens);
+                    results.innerHTML += `<div class="status success">✅ Found ${parsed.length} custom screens in localStorage</div>`;
+                } catch (e) {
+                    results.innerHTML += '<div class="status error">❌ Error parsing localStorage data</div>';
+                }
+            }
+            
+            // Check if screen manager exists
+            if (window.screenManager) {
+                results.innerHTML += '<div class="status success">✅ Screen Manager is loaded</div>';
+                const stats = window.screenManager.getStats();
+                results.innerHTML += `<pre>Screen Manager Stats:\n${JSON.stringify(stats, null, 2)}</pre>`;
+            } else {
+                results.innerHTML += '<div class="status error">❌ Screen Manager not found</div>';
+                results.innerHTML += '<div class="status warning">💡 Make sure screen-manager.js is loaded</div>';
+            }
+        }
+        
+        function showAllScreens() {
+            const allScreens = document.querySelectorAll('.screen');
+            allScreens.forEach(screen => {
+                screen.style.display = 'block';
+                screen.style.border = '3px solid red';
+                screen.style.margin = '10px';
+                screen.style.position = 'relative';
+                screen.style.zIndex = '1000';
+                
+                // Add label
+                const label = document.createElement('div');
+                label.textContent = `Screen: ${screen.id || 'unnamed'}`;
+                label.style.cssText = 'position: absolute; top: 0; left: 0; background: red; color: white; padding: 5px; font-weight: bold; z-index: 1001;';
+                screen.style.position = 'relative';
+                screen.appendChild(label);
+            });
+            
+            setTimeout(() => {
+                allScreens.forEach(screen => {
+                    screen.style.border = '';
+                    screen.style.position = '';
+                    screen.style.zIndex = '';
+                    const label = screen.querySelector('div[style*="background: red"]');
+                    if (label) label.remove();
+                });
+            }, 5000);
+        }
+        
+        function manualNext() {
+            if (window.screenManager) {
+                window.screenManager.nextScreen();
+            } else {
+                alert('Screen Manager not loaded');
+            }
+        }
+        
+        function manualPrev() {
+            if (window.screenManager) {
+                window.screenManager.previousScreen();
+            } else {
+                alert('Screen Manager not loaded');
+            }
+        }
+        
+        function resetScreens() {
+            if (confirm('This will show your first screen and stop rotation. Continue?')) {
+                const allScreens = document.querySelectorAll('.screen');
+                allScreens.forEach((screen, index) => {
+                    screen.style.display = index === 0 ? 'block' : 'none';
+                });
+                
+                if (window.screenManager) {
+                    window.screenManager.stopScreenRotation();
+                    window.screenManager.currentScreenIndex = 0;
+                }
+                
+                alert('Screens reset! First screen is now showing.');
+            }
+        }
+        
+        // Auto-run diagnostic on load
+        window.addEventListener('load', () => {
+            setTimeout(runDiagnostic, 1000);
+        });
+    </script>
+</body>
+</html>

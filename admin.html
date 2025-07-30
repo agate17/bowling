@@ -1,108 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="lv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bowling Admin Panel</title>
+    <title>Admin Panel - Screen Management</title>
     <link rel="stylesheet" href="admin_style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="index.html" class="back-btn">← Atpakaļ uz rezultātu ekrānu</a>
-        <h1>Admin Panel</h1>
-        <div class="admin-section">
-            <!-- Admin Panel to Add New Screens -->
-            <div class="admin-panel">
-                <h2>Pievienot jaunu ekrānu</h2>
-                <form id="newScreenForm">
-                    <label>Nosaukums (Title):</label>
-                    <input type="text" id="screenTitle" required><br>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🛠️ Screen Management System</h1>
+            <p>Create and manage dynamic content screens</p>
+        </div>
 
-                    <label>Apakšvirsraksts (Subtitle):</label>
-                    <input type="text" id="screenSubtitle"><br>
+        <div class="admin-content">
+            <div class="form-section">
+                <h2>Create New Screen</h2>
+                <form id="screenForm">
+                    <div class="form-group">
+                        <label for="screenId">Screen ID:</label>
+                        <input type="text" id="screenId" required placeholder="e.g., sponsor-slide-1">
+                    </div>
 
-                    <label>Satura HTML:</label><br>
-                    <textarea id="screenContent" rows="4" required></textarea><br>
+                    <div class="form-group">
+                        <label for="screenTitle">Title:</label>
+                        <input type="text" id="screenTitle" required placeholder="e.g., 🎯 SPECIAL ANNOUNCEMENT">
+                    </div>
 
-                    <label>Screen ID (unikāls ID, piem. "sponsors"):</label>
-                    <input type="text" id="screenId" required><br><br>
+                    <div class="form-group">
+                        <label for="screenSubtitle">Subtitle:</label>
+                        <input type="text" id="screenSubtitle" placeholder="e.g., Don't miss out!">
+                    </div>
 
-                    <button type="submit">💾 Saglabāt ekrānu</button>
+                    <div class="form-group">
+                        <label for="screenContent">HTML Content:</label>
+                        <textarea id="screenContent" placeholder="Enter HTML content here..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="screenType">Screen Type:</label>
+                        <select id="screenType">
+                            <option value="announcement">Announcement</option>
+                            <option value="sponsor">Sponsor Slide</option>
+                            <option value="promotion">Promotion</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn btn-success" onclick="saveScreen()">💾 Save Screen</button>
+                    <button type="button" class="btn btn-danger" onclick="clearForm()">🗑️ Clear Form</button>
                 </form>
-
-                <h3>📺 Priekšskatījums</h3>
-                <div id="previewContainer" class="screen preview"></div>
             </div>
+
+            <div class="preview-section">
+                <h2>Live Preview</h2>
+                <div class="screen-preview" id="screenPreview">
+                    <div class="preview-header">
+                        <h1 id="previewTitle">Your Title Here</h1>
+                        <div class="preview-subtitle" id="previewSubtitle">Your subtitle here</div>
+                    </div>
+                    <div class="preview-content" id="previewContent">
+                        Your HTML content will appear here...
+                    </div>
+                </div>
+            </div>
+
+            <div class="screen-list">
+                <h2>Saved Screens</h2>
+                <div id="screensList">
+                    <!-- Saved screens will be listed here -->
+                </div>
+            </div>
+        </div>
     </div>
+
     <script>
-        const form = document.getElementById("newScreenForm");
-        const preview = document.getElementById("previewContainer");
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedScreens();
+            setupPreview();
+        });
 
-        const screenStorageKey = "customScreens";
+        // Setup live preview
+        function setupPreview() {
+            const titleInput = document.getElementById('screenTitle');
+            const subtitleInput = document.getElementById('screenSubtitle');
+            const contentInput = document.getElementById('screenContent');
 
-        function createScreenElement(screenData) {
-            const screen = document.createElement("div");
-            screen.classList.add("screen");
-            screen.id = screenData.id;
-
-            screen.innerHTML = `
-                <div class="section-header">
-                    <h1>${screenData.title}</h1>
-                    <div class="subtitle">${screenData.subtitle}</div>
-                </div>
-                <div class="screen-content">
-                    ${screenData.content}
-                </div>
-            `;
-            return screen;
+            titleInput.addEventListener('input', updatePreview);
+            subtitleInput.addEventListener('input', updatePreview);
+            contentInput.addEventListener('input', updatePreview);
         }
 
+        // Update live preview
         function updatePreview() {
-            const screenData = {
-                title: document.getElementById("screenTitle").value,
-                subtitle: document.getElementById("screenSubtitle").value,
-                content: document.getElementById("screenContent").value,
-                id: document.getElementById("screenId").value
-            };
-            preview.innerHTML = "";
-            preview.appendChild(createScreenElement(screenData));
+            const title = document.getElementById('screenTitle').value || 'Your Title Here';
+            const subtitle = document.getElementById('screenSubtitle').value || 'Your subtitle here';
+            const content = document.getElementById('screenContent').value || 'Your HTML content will appear here...';
+
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewSubtitle').textContent = subtitle;
+            document.getElementById('previewContent').innerHTML = content;
         }
 
-        form.addEventListener("input", updatePreview);
-
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
-
+        // Save screen to localStorage
+        function saveScreen() {
             const screenData = {
-                title: document.getElementById("screenTitle").value,
-                subtitle: document.getElementById("screenSubtitle").value,
-                content: document.getElementById("screenContent").value,
-                id: document.getElementById("screenId").value
+                id: document.getElementById('screenId').value,
+                title: document.getElementById('screenTitle').value,
+                subtitle: document.getElementById('screenSubtitle').value,
+                content: document.getElementById('screenContent').value,
+                type: document.getElementById('screenType').value,
+                created: new Date().toISOString()
             };
 
-            // Save to localStorage
-            const savedScreens = JSON.parse(localStorage.getItem(screenStorageKey)) || [];
-            savedScreens.push(screenData);
-            localStorage.setItem(screenStorageKey, JSON.stringify(savedScreens));
+            // Validate required fields
+            if (!screenData.id || !screenData.title) {
+                alert('Please fill in Screen ID and Title fields!');
+                return;
+            }
 
-            // Add to DOM
-            const newScreen = createScreenElement(screenData);
-            document.body.appendChild(newScreen);
+            // Get existing screens
+            let screens = JSON.parse(localStorage.getItem('customScreens') || '[]');
+            
+            // Check if screen ID already exists
+            if (screens.find(screen => screen.id === screenData.id)) {
+                if (!confirm('Screen ID already exists. Do you want to overwrite it?')) {
+                    return;
+                }
+                screens = screens.filter(screen => screen.id !== screenData.id);
+            }
 
-            alert("Ekrāns pievienots!");
-            form.reset();
-            preview.innerHTML = "";
-        });
+            // Add new screen
+            screens.push(screenData);
+            localStorage.setItem('customScreens', JSON.stringify(screens));
 
-        // Load screens from localStorage on page load
-        window.addEventListener("DOMContentLoaded", () => {
-            const savedScreens = JSON.parse(localStorage.getItem(screenStorageKey)) || [];
-            savedScreens.forEach(screenData => {
-                const screen = createScreenElement(screenData);
-                document.body.appendChild(screen);
-            });
-        });
+            alert('Screen saved successfully!');
+            clearForm();
+            loadSavedScreens();
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('screenForm').reset();
+            updatePreview();
+        }
+
+        // Load saved screens
+        function loadSavedScreens() {
+            const screens = JSON.parse(localStorage.getItem('customScreens') || '[]');
+            const screensList = document.getElementById('screensList');
+
+            if (screens.length === 0) {
+                screensList.innerHTML = '<p style="color: #666;">No screens saved yet.</p>';
+                return;
+            }
+
+            screensList.innerHTML = screens.map(screen => `
+                <div class="screen-item">
+                    <div>
+                        <h4>${screen.title}</h4>
+                        <p>ID: ${screen.id} | Type: ${screen.type} | Created: ${new Date(screen.created).toLocaleDateString()}</p>
+                    </div>
+                    <div class="screen-actions">
+                        <button class="btn btn-small" onclick="editScreen('${screen.id}')">✏️ Edit</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteScreen('${screen.id}')">🗑️ Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Edit screen
+        function editScreen(screenId) {
+            const screens = JSON.parse(localStorage.getItem('customScreens') || '[]');
+            const screen = screens.find(s => s.id === screenId);
+
+            if (screen) {
+                document.getElementById('screenId').value = screen.id;
+                document.getElementById('screenTitle').value = screen.title;
+                document.getElementById('screenSubtitle').value = screen.subtitle;
+                document.getElementById('screenContent').value = screen.content;
+                document.getElementById('screenType').value = screen.type;
+                updatePreview();
+            }
+        }
+
+        // Delete screen
+        function deleteScreen(screenId) {
+            if (confirm('Are you sure you want to delete this screen?')) {
+                let screens = JSON.parse(localStorage.getItem('customScreens') || '[]');
+                screens = screens.filter(screen => screen.id !== screenId);
+                localStorage.setItem('customScreens', JSON.stringify(screens));
+                loadSavedScreens();
+                alert('Screen deleted successfully!');
+            }
+        }
+
+        // Export screens data (for future database migration)
+        function exportScreens() {
+            const screens = JSON.parse(localStorage.getItem('customScreens') || '[]');
+            const dataStr = JSON.stringify(screens, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'custom-screens-backup.json';
+            link.click();
+        }
     </script>
-
 </body>
-</html> 
+</html>

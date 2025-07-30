@@ -37,63 +37,6 @@
             </table>
         </div>
 
-        <!-- Player of the Week Screen -->
-        <div class="screen" id="playerOfWeek">
-            <div class="section-header">
-                <h1>⭐ NEDĒĻAS SPĒLĒTĀJS ⭐</h1>
-                <div class="subtitle">Izcils sniegums</div>
-            </div>
-            <div class="player-of-week">
-                <div class="player-info" style="display: flex; flex-direction: column; align-items: center;">
-                    <div class="player-main-row" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 0; margin-top: 0;">
-                        <div class="player-avatar" id="playerAvatar" style="width: 90px; height: 90px; font-size: 2.8rem; min-width: 90px; min-height: 90px; flex-shrink: 0;"></div>
-                        <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
-                            <div class="player-name" id="playerName" style="margin-bottom: 4px; font-size: 2.1rem; text-align: left;">Mike "Thunder" Johnson</div>
-                            <div class="player-title" id="playerTitle" style="font-size: 1.1rem; margin-bottom: 0; margin-left: 0; text-align: left;">Strike Master</div>
-                        </div>
-                    </div>
-                    <div class="player-stats">
-                        <div class="stat-card">
-                            <div class="stat-value" id="weeklyAverage">187</div>
-                            <div class="stat-label">Weekly Average</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="weeklyStrikes">45</div>
-                            <div class="stat-label">Strikes This Week</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="weeklySpares">32</div>
-                            <div class="stat-label">Spares This Week</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="weeklyGames">15</div>
-                            <div class="stat-label">Games Played</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Team Rankings Screen -->
-        <div class="screen" id="teamRankings">
-            <div class="section-header">
-                <h1>🏆 KOMANDU RANGA TABULA 🏆</h1>
-                <div class="subtitle">Līgas čempioni</div>
-            </div>
-            <table class="leaderboard-table" style="margin-top: 32px;">
-                <thead>
-                    <tr>
-                        <th>Vieta</th>
-                        <th>Komanda</th>
-                        <th>Vidējais</th>
-                        <th>Uzvaras-Zaudējumi</th>
-                        <th>Spēlētāji</th>
-                    </tr>
-                </thead>
-                <tbody id="teamLeaderboardBody"></tbody>
-            </table>
-        </div>
-
         <!-- Trivia Screen -->
         <div class="screen" id="trivia">
             <div class="section-header">
@@ -105,11 +48,9 @@
                 <div class="trivia-answer" id="triviaAnswer">Answer: 300 punkti!</div>
             </div>
         </div>
-
-        <!--Screen - jaunas sadaļas pievieno vienkarši izveidojot screen div ar 
-        id atbilstosi sadaļai piemeram sponsor -->
     </div>
 
     <script src="main.js"></script>
+    <script src="screen-manager.js"></script>
 </body>
 </html>
