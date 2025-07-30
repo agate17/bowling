@@ -146,7 +146,6 @@ body {
         0 0 6px #00ffff,
         0 0 12px #00ffff;
     -webkit-text-stroke: 2px #111;
-    text-stroke: 2px #111;
 }
 
 .leaderboard-header .subtitle {
@@ -180,7 +179,6 @@ body {
         0 0 6px #00ffff,
         0 0 12px #00ffff;
     -webkit-text-stroke: 2px #111;
-    text-stroke: 2px #111;
 }
 
 .section-header .subtitle {
