@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bowling Stats Display</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <body>
@@ -98,7 +98,7 @@
         </div>
     </div>
 
-    <script src="main.js"></script>
-    <script src="screen-manager.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/screen-manager.js"></script>
 </body>
 </html>
