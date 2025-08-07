@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Migration Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .status { padding: 15px; border-radius: 8px; margin: 15px 0; font-weight: 600; }
+        .status-success { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        .status-warning { background: #fff3cd; color: #856404; }
+        .btn { background: #007bff; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .btn-success { background: #28a745; }
+        .btn-danger { background: #dc3545; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; max-height: 300px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Screen Migration Tool</h1>
+        <p>This tool helps you migrate custom screens from localStorage to the database.</p>
+        
+        <div id="status"></div>
+        
+        <div class="controls">
+            <button class="btn" onclick="checkLocalStorage()">🔍 Check localStorage</button>
+            <button class="btn btn-success" onclick="migrateScreens()">🚀 Migrate to Database</button>
+            <button class="btn btn-danger" onclick="clearLocalStorage()">🗑️ Clear localStorage</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'backend/';
+        
+        function showStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status status-${type}`;
+            statusDiv.innerHTML = message;
+        }
+
+        function checkLocalStorage() {
+            const results = document.getElementById('results');
+            const customScreens = localStorage.getItem('customScreens');
+            
+            if (!customScreens) {
+                results.innerHTML = '<div class="status-warning">No custom screens found in localStorage</div>';
+                return;
+            }
+
+            try {
+                const screens = JSON.parse(customScreens);
+                results.innerHTML = `
+                    <h3>📋 Found ${screens.length} screens in localStorage:</h3>
+                    <pre>${JSON.stringify(screens, null, 2)}</pre>
+                `;
+                
+                if (screens.length > 0) {
+                    showStatus(`Found ${screens.length} screens ready for migration`, 'success');
+                }
+            } catch (error) {
+                results.innerHTML = '<div class="status-error">Error parsing localStorage data: ' + error.message + '</div>';
+            }
+        }
+
+        async function migrateScreens() {
+            const customScreens = localStorage.getItem('customScreens');
+            
+            if (!customScreens) {
+                showStatus('No screens to migrate', 'warning');
+                return;
+            }
+
+            try {
+                const screens = JSON.parse(customScreens);
+                let migrated = 0;
+                let errors = [];
+
+                showStatus('Starting migration...', 'warning');
+
+                // First test the endpoint
+                try {
+                    const testResponse = await fetch(API_BASE + 'test.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ test: true })
+                    });
+                    
+                    const testResult = await testResponse.json();
+                    console.log('Test endpoint result:', testResult);
+                    
+                    if (!testResult.success) {
+                        throw new Error('Test endpoint failed: ' + testResult.error);
+                    }
+                } catch (testError) {
+                    showStatus('❌ API endpoint test failed: ' + testError.message + '<br>Please run debug.php to check your setup.', 'error');
+                    return;
+                }
+
+                for (const screen of screens) {
+                    try {
+                        // Convert localStorage format to database format
+                        const screenData = {
+                            screen_id: screen.id,
+                            title: screen.title,
+                            subtitle: screen.subtitle || '',
+                            content: screen.content || '',
+                            screen_type: screen.type || 'custom',
+                            display_duration: 10000
+                        };
+
+                        console.log('Migrating screen:', screenData);
+
+                        const response = await fetch(API_BASE + 'add-screen.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(screenData)
+                        });
+
+                        console.log('Response status:', response.status);
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error('Response error:', errorText);
+                            throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 200)}`);
+                        }
+
+                        const result = await response.json();
+                        console.log('Response result:', result);
+
+                        if (result.success) {
+                            migrated++;
+                        } else {
+                            errors.push(`${screen.id}: ${result.error}`);
+                        }
+                    } catch (error) {
+                        console.error('Migration error for screen:', screen.id, error);
+                        errors.push(`${screen.id}: ${error.message}`);
+                    }
+
+                    // Small delay between requests
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
+                let statusMessage = `✅ Migration complete! ${migrated}/${screens.length} screens migrated successfully.`;
+                
+                if (errors.length > 0) {
+                    statusMessage += `<br><br>❌ Errors:<br>${errors.join('<br>')}`;
+                    showStatus(statusMessage, 'warning');
+                } else {
+                    showStatus(statusMessage, 'success');
+                }
+
+                // Refresh the results
+                checkLocalStorage();
+
+            } catch (error) {
+                console.error('Migration failed:', error);
+                showStatus('❌ Migration failed: ' + error.message + '<br><br>💡 Try running debug.php to check your setup.', 'error');
+            }
+        }
+
+        function clearLocalStorage() {
+            if (confirm('Are you sure you want to clear localStorage? This cannot be undone!')) {
+                localStorage.removeItem('customScreens');
+                showStatus('localStorage cleared successfully', 'success');
+                document.getElementById('results').innerHTML = '<div class="status-warning">localStorage is now empty</div>';
+            }
+        }
+
+        // Check localStorage on page load
+        window.addEventListener('load', checkLocalStorage);
+    </script>
+</body>
+</html>

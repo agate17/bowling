@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <body>
-    <a href="admin.html" class="admin-btn" title="Admin Panel" style="right: 72px;">Admin</a>
+    <a href="admin/admin.php" class="admin-btn" title="Admin Panel" style="right: 72px;">Admin</a>
     <button id="fullscreen-btn" class="fullscreen-btn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen">
         <i class="bi bi-arrows-fullscreen"></i>
     </button>
