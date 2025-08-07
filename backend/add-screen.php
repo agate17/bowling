@@ -1,10 +1,46 @@
 <?php
+// Fixed add-screen.php - Updated path resolution
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, PUT, DELETE');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require_once '../config/db.php';
+// Better path resolution
+$config_path = dirname(__DIR__) . '/config/db.php';
+
+if (!file_exists($config_path)) {
+    // Try alternative paths
+    $alt_paths = [
+        '../config/db.php',
+        dirname(__FILE__) . '/../config/db.php',
+        $_SERVER['DOCUMENT_ROOT'] . '/bowling/config/db.php',
+        __DIR__ . '/../config/db.php'
+    ];
+    
+    foreach ($alt_paths as $path) {
+        if (file_exists($path)) {
+            $config_path = $path;
+            break;
+        }
+    }
+}
+
+if (!file_exists($config_path)) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Database configuration file not found. Checked: ' . $config_path,
+        'debug_info' => [
+            'current_dir' => getcwd(),
+            '__DIR__' => __DIR__,
+            'dirname(__DIR__)' => dirname(__DIR__),
+            'checked_path' => $config_path
+        ]
+    ]);
+    exit;
+}
+
+require_once $config_path;
 
 $method = $_SERVER['REQUEST_METHOD'];
 $input = json_decode(file_get_contents('php://input'), true);
@@ -155,7 +191,12 @@ try {
     http_response_code(500);
     $response = [
         'success' => false,
-        'error' => $e->getMessage()
+        'error' => $e->getMessage(),
+        'debug_info' => [
+            'method' => $method,
+            'config_path' => $config_path,
+            'input_received' => $input
+        ]
     ];
     echo json_encode($response);
 }

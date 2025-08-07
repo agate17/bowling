@@ -12,14 +12,15 @@
     <button id="fullscreen-btn" class="fullscreen-btn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen">
         <i class="bi bi-arrows-fullscreen"></i>
     </button>
+    
     <div class="container">
         <div class="progress-bar" id="progressBar"></div>
         
-        <!-- Leaderboard Screen -->
-        <div class="screen active" id="leaderboard">
+        <!-- Overall Leaderboard Screen (Built-in) -->
+        <div class="screen" id="overall-leaderboard" data-screen-type="builtin">
             <div class="leaderboard-header">
-                <h1>🎳 REZULTĀTU TABULA 🎳</h1>
-                <div class="subtitle">Labākie boulinga spēlētāji šomēnes</div>
+                <h1>🎳 REZULTĀTU TABULA - KOPĒJĀ 🎳</h1>
+                <div class="subtitle">Labākie boulinga spēlētāji kopumā</div>
             </div>
             <table class="leaderboard-table">
                 <thead>
@@ -33,41 +34,38 @@
                     </tr>
                 </thead>
                 <tbody id="leaderboardBody">
+                    <!-- Data will be loaded by main.js -->
                 </tbody>
             </table>
         </div>
 
-        <!-- Player of Week Screen -->
-        <div class="screen" id="playerOfWeek" style="display: none;">
-            <div class="section-header">
-                <h1>🏆 NEDĒĻAS SPĒLĒTĀJS 🏆</h1>
-                <div class="subtitle">Šīs nedēļas uzvarētājs</div>
+        <!-- Daily Leaderboard Screen (Built-in) -->
+        <div class="screen" id="daily-leaderboard" data-screen-type="builtin" style="display: none;">
+            <div class="leaderboard-header">
+                <h1>🎳 REZULTĀTU TABULA - DIENAS 🎳</h1>
+                <div class="subtitle">Labākie boulinga spēlētāji šodien</div>
             </div>
-            <div class="player-spotlight">
-                <div class="player-info">
-                    <h2>Jānis 'Striker' Ozoliņš</h2>
-                    <div class="stats">
-                        <div class="stat">
-                            <span class="stat-value">234</span>
-                            <span class="stat-label">Vidējie punkti</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-value">12</span>
-                            <span class="stat-label">Trāpījumi</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-value">5</span>
-                            <span class="stat-label">Spēles</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Vieta</th>
+                        <th>Spēlētājs</th>
+                        <th>Punkti</th>
+                        <th>Trāpījumi</th>
+                        <th>Rezerves</th>
+                        <th>Spēles</th>
+                    </tr>
+                </thead>
+                <tbody id="dailyLeaderboardBody">
+                    <!-- Data will be loaded by main.js -->
+                </tbody>
+            </table>
         </div>
 
-        <!-- Team Rankings Screen -->
-        <div class="screen" id="teamRankings" style="display: none;">
+        <!-- Team Rankings Screen (Built-in) -->
+        <div class="screen" id="team-rankings" data-screen-type="builtin" style="display: none;">
             <div class="section-header">
-                <h1>👥 KOMANDU REITINGS 👥</h1>
+                <h1>🏆 KOMANDU REITINGS 🏆</h1>
                 <div class="subtitle">Labākās komandas šomēnes</div>
             </div>
             <table class="leaderboard-table">
@@ -75,30 +73,73 @@
                     <tr>
                         <th>Vieta</th>
                         <th>Komanda</th>
-                        <th>Vidējie</th>
-                        <th>Rezultāts</th>
+                        <th>Vidējais</th>
+                        <th>Uzvaras</th>
                         <th>Dalībnieki</th>
                     </tr>
                 </thead>
                 <tbody id="teamLeaderboardBody">
+                    <!-- Data will be loaded by main.js -->
                 </tbody>
             </table>
         </div>
 
-        <!-- Trivia Screen -->
-        <div class="screen" id="trivia" style="display: none;">
+        <!-- Trivia Screen (Built-in) -->
+        <div class="screen" id="trivia-screen" data-screen-type="builtin" style="display: none;">
             <div class="section-header">
-                <h1>🧠 BOULINGA VIKTORĪNA 🧠</h1>
-                <div class="subtitle">Pārbaudi savas zināšanas</div>
+                <h1>🧠 BOULINGA JAUTĀJUMS 🧠</h1>
             </div>
-            <div class="trivia-screen">
-                <div class="trivia-question" id="triviaQuestion">Kāds ir maksimālais punktu skaits ideālā boulinga spēlē?</div>
-                <div class="trivia-answer" id="triviaAnswer">Answer: 300 punkti!</div>
+            <div class="trivia-content">
+                <div class="trivia-question" id="triviaQuestion">
+                    Kāds ir maksimālais punktu skaits ideālā boulinga spēlē?
+                </div>
+                <div class="trivia-answer" id="triviaAnswer">
+                    Atbilde: 300 punkti!
+                </div>
             </div>
         </div>
+
+        <!-- Custom screens will be injected here by screen-manager.js -->
+        
     </div>
 
+    <!-- Status indicator for debugging -->
+    <div id="debug-info" style="position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-size: 12px; max-width: 300px; display: none;">
+        <div>Current Screen: <span id="current-screen-debug">Loading...</span></div>
+        <div>Total Screens: <span id="total-screens-debug">0</span></div>
+        <div>Custom Screens: <span id="custom-screens-debug">0</span></div>
+        <div>Rotation: <span id="rotation-debug">Stopped</span></div>
+    </div>
+
+    <!-- Scripts -->
     <script src="assets/js/main.js"></script>
     <script src="assets/js/screen-manager.js"></script>
+    
+    <!-- Debug toggle - remove in production -->
+    <script>
+        // Toggle debug info with Ctrl+D
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                const debugInfo = document.getElementById('debug-info');
+                debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+                
+                if (debugInfo.style.display === 'block' && window.screenManager) {
+                    updateDebugInfo();
+                    setInterval(updateDebugInfo, 2000);
+                }
+            }
+        });
+        
+        function updateDebugInfo() {
+            if (window.screenManager) {
+                const stats = window.screenManager.getStats();
+                document.getElementById('current-screen-debug').textContent = stats.currentScreen;
+                document.getElementById('total-screens-debug').textContent = stats.totalScreens;
+                document.getElementById('custom-screens-debug').textContent = stats.customScreens;
+                document.getElementById('rotation-debug').textContent = stats.isRotating ? 'Running' : 'Stopped';
+            }
+        }
+    </script>
 </body>
 </html>

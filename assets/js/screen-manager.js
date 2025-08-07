@@ -1,4 +1,4 @@
-// Fixed Custom Screen Management System - Handles Existing Screens
+// Updated Screen Management System - Database Integration
 // Replace your screen-manager.js with this version
 
 class ScreenManager {
@@ -8,68 +8,92 @@ class ScreenManager {
         this.currentScreenIndex = 0;
         this.rotationInterval = null;
         this.isRotating = false;
+        this.API_BASE = 'backend/';
         this.init();
     }
 
     init() {
+        console.log('🚀 Initializing Screen Manager...');
         // Wait a bit for DOM to be fully ready
         setTimeout(() => {
-            this.loadCustomScreens();
-            this.injectCustomScreens();
-            this.getAllScreenElements();
-            this.setupInitialDisplay();
-            // Only start rotation if there are multiple screens
-            if (this.allScreens.length > 1) {
-                this.startScreenRotation(10000); // 10 seconds
-            }
+            this.loadScreensFromDatabase();
         }, 100);
     }
 
-    // Load custom screens from localStorage
-    loadCustomScreens() {
+    // Load screens from database instead of localStorage
+    async loadScreensFromDatabase() {
         try {
-            const customScreens = JSON.parse(localStorage.getItem('customScreens') || '[]');
-            this.customScreens = customScreens.filter(screen => screen.id && screen.title);
-            console.log(`✅ Loaded ${this.customScreens.length} custom screens`);
+            console.log('📡 Loading screens from database...');
+            const response = await fetch(this.API_BASE + 'get-screens.php');
+            const result = await response.json();
+
+            if (result.success) {
+                // Combine builtin and custom screens
+                const allDatabaseScreens = [...result.data.builtin, ...result.data.custom];
+                this.customScreens = result.data.custom;
+                
+                console.log(`✅ Loaded ${allDatabaseScreens.length} screens from database`);
+                console.log('   - Builtin screens:', result.data.builtin.length);
+                console.log('   - Custom screens:', result.data.custom.length);
+                
+                // Inject custom screens into DOM
+                this.injectCustomScreens(result.data.custom);
+                
+                // Get all screen elements and setup display
+                this.getAllScreenElements();
+                this.setupInitialDisplay();
+                
+                // Start rotation if there are multiple screens
+                if (this.allScreens.length > 1) {
+                    this.startScreenRotation(10000); // 10 seconds
+                }
+            } else {
+                console.error('❌ Failed to load screens from database:', result.error);
+                // Fallback to existing screens
+                this.getAllScreenElements();
+                this.setupInitialDisplay();
+            }
         } catch (error) {
-            console.error('❌ Error loading custom screens:', error);
-            this.customScreens = [];
+            console.error('❌ Error loading screens from database:', error);
+            // Fallback to existing screens
+            this.getAllScreenElements();
+            this.setupInitialDisplay();
         }
     }
 
     // Create HTML for custom screen
     createCustomScreenHTML(screenData) {
         return `
-            <div class="screen custom-screen" id="${screenData.id}" data-screen-type="${screenData.type}" style="display: none;">
+            <div class="screen custom-screen" id="${screenData.screen_id}" data-screen-type="${screenData.screen_type}" style="display: none;">
                 <div class="section-header">
                     <h1>${screenData.title}</h1>
                     ${screenData.subtitle ? `<div class="subtitle">${screenData.subtitle}</div>` : ''}
                 </div>
                 <div class="custom-content">
-                    ${screenData.content}
+                    ${screenData.content || ''}
                 </div>
+                <div class="progress-bar" id="progressBar-${screenData.screen_id}"></div>
             </div>
         `;
     }
 
     // Inject custom screens into the DOM
-    injectCustomScreens() {
+    injectCustomScreens(customScreens) {
         // Remove old custom screens first
         document.querySelectorAll('.custom-screen').forEach(screen => screen.remove());
 
         // Find where to inject screens (look for screen container or body)
-        const container = document.querySelector('.screen-container') || 
+        const container = document.querySelector('.container') || 
                          document.querySelector('main') || 
-                         document.querySelector('.container') ||
                          document.body;
 
         // Add new custom screens
-        this.customScreens.forEach(screenData => {
+        customScreens.forEach(screenData => {
             const screenHTML = this.createCustomScreenHTML(screenData);
             container.insertAdjacentHTML('beforeend', screenHTML);
         });
 
-        console.log(`✅ Injected ${this.customScreens.length} custom screens`);
+        console.log(`✅ Injected ${customScreens.length} custom screens into DOM`);
     }
 
     // Get all screen elements (existing + custom)
@@ -96,6 +120,9 @@ class ScreenManager {
         this.allScreens[0].style.display = 'block';
         console.log(`✅ Showing initial screen: ${this.allScreens[0].id || 'unnamed'}`);
 
+        // Start progress bar for current screen
+        this.updateProgressBar(10000);
+
         // If only one screen, make sure it's visible
         if (this.allScreens.length === 1) {
             console.log('ℹ️ Only one screen found, no rotation needed');
@@ -103,7 +130,7 @@ class ScreenManager {
     }
 
     // Start automatic screen rotation
-    startScreenRotation(interval = 1000) {
+    startScreenRotation(interval = 10000) {
         if (this.allScreens.length <= 1) {
             console.log('ℹ️ Not enough screens for rotation');
             return;
@@ -115,7 +142,7 @@ class ScreenManager {
         }
 
         this.isRotating = true;
-        console.log(`🔄 Starting screen rotation (${interval/100}s interval)`);
+        console.log(`🔄 Starting screen rotation (${interval/1000}s interval)`);
 
         this.rotationInterval = setInterval(() => {
             this.nextScreen();
@@ -147,6 +174,9 @@ class ScreenManager {
         
         const currentScreen = this.allScreens[this.currentScreenIndex];
         console.log(`🔄 Switched to screen: ${currentScreen.id || 'unnamed'}`);
+        
+        // Restart progress bar for new screen
+        this.updateProgressBar(10000);
     }
 
     // Move to previous screen
@@ -164,20 +194,48 @@ class ScreenManager {
         
         const currentScreen = this.allScreens[this.currentScreenIndex];
         console.log(`🔄 Switched to screen: ${currentScreen.id || 'unnamed'}`);
+        
+        // Restart progress bar for new screen
+        this.updateProgressBar(10000);
     }
 
-    // Refresh screens (reload from localStorage and reinject)
-    refresh() {
-        console.log('🔄 Refreshing screens...');
-        this.stopScreenRotation();
-        this.loadCustomScreens();
-        this.injectCustomScreens();
-        this.getAllScreenElements();
-        this.setupInitialDisplay();
+    // Progress bar function
+    updateProgressBar(duration = 10000) {
+        // Try to find progress bar in current screen first
+        const currentScreen = this.allScreens[this.currentScreenIndex];
+        let progressBar = currentScreen ? currentScreen.querySelector('.progress-bar') : null;
         
-        if (this.allScreens.length > 1) {
-            this.startScreenRotation(10000);
+        // Fallback to global progress bar
+        if (!progressBar) {
+            progressBar = document.getElementById('progressBar');
         }
+        
+        if (!progressBar) return;
+        
+        // Reset progress bar
+        progressBar.style.width = '0%';
+        
+        const startTime = Date.now();
+        
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min((elapsed / duration) * 100, 100);
+            
+            progressBar.style.width = progress + '%';
+            
+            if (progress < 100) {
+                requestAnimationFrame(animate);
+            }
+        };
+        
+        animate();
+    }
+
+    // Refresh screens (reload from database and reinject)
+    async refresh() {
+        console.log('🔄 Refreshing screens from database...');
+        this.stopScreenRotation();
+        await this.loadScreensFromDatabase();
     }
 
     // Get screen statistics
@@ -201,6 +259,8 @@ class ScreenManager {
             // Show target screen
             this.currentScreenIndex = screenIndex;
             this.allScreens[this.currentScreenIndex].style.display = 'block';
+            // Restart progress bar
+            this.updateProgressBar(10000);
             console.log(`🎯 Manually switched to screen: ${screenId}`);
         } else {
             console.warn(`⚠️ Screen with ID '${screenId}' not found`);
@@ -212,14 +272,6 @@ class ScreenManager {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Initializing Screen Manager...');
     window.screenManager = new ScreenManager();
-    
-    // Listen for storage changes to auto-refresh screens
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'customScreens') {
-            console.log('📦 Custom screens updated, refreshing...');
-            window.screenManager.refresh();
-        }
-    });
 });
 
 // Global utility functions
@@ -258,17 +310,9 @@ function getScreenStats() {
     }
 }
 
-// Debug function - shows all screens briefly
-function debugShowAllScreens() {
+function refreshScreens() {
     if (window.screenManager) {
-        console.log('🔍 Debug: Showing all screens for 2 seconds each...');
-        window.screenManager.allScreens.forEach((screen, index) => {
-            setTimeout(() => {
-                window.screenManager.allScreens.forEach(s => s.style.display = 'none');
-                screen.style.display = 'block';
-                console.log(`🔍 Debug showing: ${screen.id || 'unnamed'} (${index + 1}/${window.screenManager.allScreens.length})`);
-            }, index * 2000);
-        });
+        window.screenManager.refresh();
     }
 }
 

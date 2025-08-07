@@ -4,7 +4,33 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT');
 header('Access-Control-Allow-Headers: Content-Type');
 
-require_once '../config/db.php';
+// With this improved version:
+$config_path = dirname(__DIR__) . '/config/db.php';
+
+if (!file_exists($config_path)) {
+    // Try alternative paths
+    $alt_paths = [
+        '../config/db.php',
+        dirname(__FILE__) . '/../config/db.php',
+        $_SERVER['DOCUMENT_ROOT'] . '/bowling/config/db.php',
+        __DIR__ . '/../config/db.php'
+    ];
+    
+    foreach ($alt_paths as $path) {
+        if (file_exists($path)) {
+            $config_path = $path;
+            break;
+        }
+    }
+}
+
+if (!file_exists($config_path)) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Database config not found']);
+    exit;
+}
+
+require_once $config_path;
 
 $method = $_SERVER['REQUEST_METHOD'];
 $input = json_decode(file_get_contents('php://input'), true);

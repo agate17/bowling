@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Loading Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .status { padding: 15px; border-radius: 8px; margin: 15px 0; font-weight: 600; }
+        .status-success { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        .status-warning { background: #fff3cd; color: #856404; }
+        .btn { background: #007bff; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .btn-success { background: #28a745; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; max-height: 400px; }
+        .screen-item { border: 1px solid #ddd; margin: 10px 0; padding: 15px; border-radius: 8px; }
+        .screen-item h4 { margin: 0 0 10px 0; color: #333; }
+        .builtin { background: #e8f4f8; border-color: #b3d9e8; }
+        .custom { background: #f8f9fa; border-color: #dee2e6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Screen Loading Test</h1>
+        <p>This tool tests if your screens are loading correctly from the database.</p>
+        
+        <div id="status"></div>
+        
+        <div class="controls">
+            <button class="btn" onclick="testDatabaseConnection()">🔗 Test Database</button>
+            <button class="btn btn-success" onclick="loadScreensFromDatabase()">📡 Load Screens</button>
+            <button class="btn" onclick="testAPIEndpoint()">🧪 Test API</button>
+            <button class="btn" onclick="openMainDisplay()">🖥️ Open Main Display</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'backend/';
+        
+        function showStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status status-${type}`;
+            statusDiv.innerHTML = message;
+        }
+
+        async function testDatabaseConnection() {
+            showStatus('Testing database connection...', 'warning');
+            
+            try {
+                const response = await fetch(API_BASE + 'get-screens.php');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus('✅ Database connection successful!', 'success');
+                    return true;
+                } else {
+                    showStatus(`❌ Database error: ${result.error}`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                showStatus(`❌ Connection failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function testAPIEndpoint() {
+            showStatus('Testing API endpoint...', 'warning');
+            
+            try {
+                const response = await fetch(API_BASE + 'test.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ test: 'screen-loading' })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus('✅ API endpoint working!', 'success');
+                    document.getElementById('results').innerHTML = `<h3>API Test Results:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                } else {
+                    showStatus(`❌ API error: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ API test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadScreensFromDatabase() {
+            showStatus('Loading screens from database...', 'warning');
+            
+            try {
+                const response = await fetch(API_BASE + 'get-screens.php');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const builtinCount = result.data.builtin.length;
+                    const customCount = result.data.custom.length;
+                    const totalCount = builtinCount + customCount;
+                    
+                    showStatus(`✅ Loaded ${totalCount} screens (${builtinCount} builtin, ${customCount} custom)`, 'success');
+                    
+                    displayScreenResults(result.data);
+                } else {
+                    showStatus(`❌ Failed to load screens: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Error loading screens: ${error.message}`, 'error');
+            }
+        }
+
+        function displayScreenResults(data) {
+            const results = document.getElementById('results');
+            let html = '<h3>📋 Screens Found:</h3>';
+            
+            // Built-in screens
+            if (data.builtin.length > 0) {
+                html += '<h4>🖥️ Built-in Screens:</h4>';
+                data.builtin.forEach(screen => {
+                    html += `
+                        <div class="screen-item builtin">
+                            <h4>${screen.title}</h4>
+                            <p><strong>ID:</strong> ${screen.screen_id}</p>
+                            <p><strong>Type:</strong> ${screen.screen_type}</p>
+                            <p><strong>Duration:</strong> ${screen.display_duration}ms</p>
+                            ${screen.subtitle ? `<p><strong>Subtitle:</strong> ${screen.subtitle}</p>` : ''}
+                        </div>
+                    `;
+                });
+            }
+            
+            // Custom screens
+            if (data.custom.length > 0) {
+                html += '<h4>🎨 Custom Screens:</h4>';
+                data.custom.forEach(screen => {
+                    html += `
+                        <div class="screen-item custom">
+                            <h4>${screen.title}</h4>
+                            <p><strong>ID:</strong> ${screen.screen_id}</p>
+                            <p><strong>Type:</strong> ${screen.screen_type}</p>
+                            <p><strong>Duration:</strong> ${screen.display_duration}ms</p>
+                            <p><strong>Created:</strong> ${new Date(screen.created_at).toLocaleDateString()}</p>
+                            ${screen.subtitle ? `<p><strong>Subtitle:</strong> ${screen.subtitle}</p>` : ''}
+                            ${screen.content ? `<p><strong>Has Content:</strong> Yes (${screen.content.length} chars)</p>` : '<p><strong>Content:</strong> Empty</p>'}
+                        </div>
+                    `;
+                });
+            }
+            
+            if (data.builtin.length === 0 && data.custom.length === 0) {
+                html += '<div class="status-warning">No screens found in database. Try creating some in the admin panel.</div>';
+            }
+            
+            results.innerHTML = html;
+        }
+
+        function openMainDisplay() {
+            window.open('index.php', 'mainDisplay', 'width=1200,height=800');
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', async () => {
+            setTimeout(async () => {
+                const dbOk = await testDatabaseConnection();
+                if (dbOk) {
+                    await loadScreensFromDatabase();
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

@@ -4,65 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Screen Management</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #2c3e50; }
-        
-        .admin-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        .admin-header { text-align: center; margin-bottom: 30px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .admin-header h1 { color: #2c3e50; font-size: 2.5em; margin-bottom: 10px; }
-        
-        .admin-content { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
-        
-        .form-section, .preview-section { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .form-section h2, .preview-section h2 { margin-bottom: 20px; color: #2980b9; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
-        
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #34495e; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e0e6ed; border-radius: 8px; font-size: 14px; transition: border-color 0.3s; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #3498db; }
-        .form-group textarea { resize: vertical; min-height: 120px; font-family: 'Courier New', monospace; }
-        
-        .btn { background: #3498db; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; margin: 5px; transition: all 0.3s; }
-        .btn:hover { background: #2980b9; transform: translateY(-2px); }
-        .btn-success { background: #27ae60; }
-        .btn-success:hover { background: #229954; }
-        .btn-danger { background: #e74c3c; }
-        .btn-danger:hover { background: #c0392b; }
-        .btn-small { padding: 8px 12px; font-size: 12px; }
-        
-        .screen-preview { border: 2px solid #e0e6ed; border-radius: 12px; padding: 20px; min-height: 300px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .preview-header { text-align: center; margin-bottom: 20px; }
-        .preview-header h1 { font-size: 2em; margin-bottom: 10px; }
-        .preview-subtitle { font-size: 1.2em; opacity: 0.9; }
-        .preview-content { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; min-height: 100px; }
-        
-        .screen-list { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .screen-category { margin: 20px 0; border: 1px solid #e0e6ed; border-radius: 12px; padding: 20px; }
-        .screen-category h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; }
-        
-        .screen-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; margin: 10px 0; border: 1px solid #e0e6ed; border-radius: 10px; transition: all 0.3s; }
-        .screen-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .screen-item h4 { margin: 0 0 5px 0; color: #2c3e50; }
-        .screen-item p { margin: 0; color: #7f8c8d; font-size: 13px; }
-        .screen-item small { color: #95a5a6; }
-        
-        .builtin-screen { border-left: 4px solid #27ae60; background: #f8fff9; }
-        .custom-screen { border-left: 4px solid #3498db; background: #f8fbff; }
-        
-        .screen-actions { display: flex; gap: 5px; }
-        .screen-status { background: #27ae60; color: white; padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; }
-        
-        .screen-controls { margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 12px; }
-        .screen-controls h3 { margin-top: 0; color: #2c3e50; }
-        
-        .status-message { padding: 15px; border-radius: 8px; margin: 15px 0; font-weight: 600; }
-        .status-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .status-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .status-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-        
-        .loading { opacity: 0.6; pointer-events: none; }
-    </style>
+    <link rel="stylesheet" href="../assets/css/admin_style.css">
 </head>
 <body>
     <div class="admin-container">
